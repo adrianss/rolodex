@@ -7,7 +7,6 @@
     <!--[if lt IE 8]>
     <%= stylesheet_link_tag "ie", :media => "screen, projection" %>
     <![endif]-->
-    <%= javascript_include_tag "jquery-1.4.2.min.js", "jquery-ui-1.8.1.custom.min.js" %>
     <%#= csrf_meta_tag %>
   </head>
   <body>
@@ -22,10 +21,7 @@
         <% end %>
       </div>
       <div id="content">
-        <div id="sidebar">
-          <%= render :partial => "shared/sidebar" %>
-        </div>
-        <div id="details">
+        <div id="content-main">
           <%= yield %>
         </div>
       </div>

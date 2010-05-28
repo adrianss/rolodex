@@ -1,0 +1,20 @@
+<h3>Sign On</h1>
+
+<% form_for @user_session, :url => user_session_path do |f| %>
+<%= f.error_messages %>
+<div class="field">
+  <%= f.label :login %>
+  <%= f.text_field :login %>
+</div>
+<div class="field">
+  <%= f.label :password %>
+  <%= f.password_field :password %>
+</div>
+<div class="actions">
+  <%= f.submit "Submit" %>
+  <p>
+    Not Registered? <%= link_to "Register", new_user_path %>
+  </p>
+  
+</div>
+<% end %>

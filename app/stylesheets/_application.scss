@@ -1,4 +1,4 @@
-/* @group sidebar */
+/* @group layout */
 
 #container {
   @include container; 
@@ -7,6 +7,11 @@
 
 #header, #footer, #content {
   @include full;
+}
+
+#content-main {
+  @include full(12);
+  @include pad(2,2);
 }
 
 #sidebar {
@@ -21,3 +26,14 @@
 
 /* @end */
 
+.field label, .field input {
+  display: block;
+}
+
+.actions {
+  margin-top: 2em;
+}
+
+#new_user, #new_user_session, .edit_user {
+  max-width: 240px;
+}

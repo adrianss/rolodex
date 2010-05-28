@@ -1,0 +1,11 @@
+<h3>Edit Profile</h3>
+
+<% form_for(@user) do |f| %>
+<%= f.error_messages %>
+<%= render :partial => "form", :locals => { :f => f} %>
+<div class="actions">
+  <%= f.submit 'Update' %>
+</div>
+<% end %>
+
+<%#= link_to 'Regresar', root_url %>

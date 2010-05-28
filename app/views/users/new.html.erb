@@ -1,0 +1,9 @@
+<h3>Sign In</h3>
+
+<% form_for(@user) do |f| %>
+<%= f.error_messages %>
+<%= render :partial => "form", :locals => { :f => f} %>
+<div class="actions">
+  <%= f.submit 'Create' %>
+</div>
+<% end %>
