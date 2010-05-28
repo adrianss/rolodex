@@ -1,0 +1,23 @@
+/* @group sidebar */
+
+#container {
+  @include container; 
+  width: 100%;
+}
+
+#header, #footer, #content {
+  @include full;
+}
+
+#sidebar {
+  @include columns(4,12);
+  @include alpha(12);
+}
+
+#details {
+  @include columns(8,12);
+  @include omega(12);
+}
+
+/* @end */
+

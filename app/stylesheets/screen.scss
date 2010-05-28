@@ -8,9 +8,7 @@
 
 @include susy;
 
-// change '#page' to match your HTML container element(s)
-#page {
-  @include container; }
+@import "application";
 
 /* @end */
 
