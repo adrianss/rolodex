@@ -1,0 +1,139 @@
+set :site, "dominatorhosting.com"
+set :project_name, site
+set :site_username, "dominato"
+set :application, project_name
+set :home_dir, "/home/#{site_username}"
+set :rep_git_name, "#{project_name}.git"
+set :repository,  "#{site_username}@#{site}:#{home_dir}/scm/#{rep_git_name}"
+set :scm, :git
+set :deploy_to, "#{home_dir}/apps/#{project_name}"
+default_run_options[:pty] = true
+set :use_sudo, false
+set :branch, "master"
+set :user, "#{site_username}"
+set :scm_command, "#{home_dir}/bin/git"
+set :local_scm_command, "git"
+set :scm_password, proc{Capistrano::CLI.password_prompt('Git pass:')}
+role :web, site
+role :app, site
+role :db, site, :primary => true
+
+desc "Create repository"
+task :create_git_repository do
+  system "git clone --bare . ../#{rep_git_name}"
+end
+
+desc "Send git repository"
+task :send_git_repository do
+  system "rm -f ../#{rep_git_name}.tar.gz"  
+  system "tar zcf ../#{rep_git_name}.tar.gz ../#{rep_git_name}"
+  run "mkdir -p #{home_dir}/scm/"
+  system "scp ../#{rep_git_name}.tar.gz #{site_username}@#{site}:#{home_dir}/scm/#{rep_git_name}.tar.gz"
+  run "cd #{home_dir}/scm/; tar --atime-preserve -zxf #{rep_git_name}.tar.gz"
+  run "rm -f #{rep_git_name}.tar.gz"
+
+end
+
+desc "Set git origin repository"
+task :set_git_origin do
+  system "git remote add origin #{site_username}@#{site}:#{home_dir}/scm/#{rep_git_name}"
+  system "git remote update"
+end
+
+desc "Install git in remote machine"
+task :install_git do
+  run """
+mkdir -p temp;
+cd temp;
+wget http://kernel.org/pub/software/scm/git/git-1.7.0.6.tar.bz2 ;
+tar jxf git-1.7.0.6.tar.bz2 ;
+cd git-1.7.0.6 ;
+make --prefix=$HOME ;
+make install ;
+"""
+end
+
+desc "update git repository"
+task :update_git_repository do
+  system "git push"
+end
+
+desc "Copy .htaccess to public folder"
+task :copy_htacces_to_public do
+  run "cp -f #{shared_path}/public/.htaccess #{release_path}/public/"
+end
+
+desc "Symlink the database config file from shared
+      directory to current release directory."
+task :symlink_database_yml do
+  run "ln -nsf #{shared_path}/config/database.yml
+       #{release_path}/config/database.yml"
+end
+
+desc "Create shared database.yml for server"
+task :create_database_yml do
+  system "scp config/database.yml.sample #{shared_path}/config/database.yml"
+end
+
+namespace :deploy do
+  task :start, :roles => :app do
+    # Do nothing.
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application (Phusion Passenger)"
+  task :restart, :roles => :app do
+    run "touch #{current_release}/tmp/restart.txt"
+  end
+
+  namespace :web do
+    desc "Disable Web"
+    task :disable, :roles => :web, :except => { :no_release => true } do
+      require 'erb'
+      on_rollback { run "rm #{shared_path}/system/maintenance.html" }
+      reason = ENV['REASON' ]
+      deadline = ENV['UNTIL' ]
+      template_file = "app/views/shared/maintenance.html.erb"
+      template = File.read(template_file)
+      maintenance_page = ERB.new(template).result(binding)
+      put maintenance_page, "#{shared_path}/system/maintenance.html", :mode => 0644
+    end
+    desc "Enable Web"
+    task :enable, :roles => :web do
+      run "rm #{shared_path}/system/maintenance.html"
+    end
+  end
+end
+
+namespace :backup do
+  namespace :db do
+    desc "Backup remote database production"
+    task :production, :roles => :db, :only => { :primary => true } do
+      require "yaml"
+      tmpdir = "#{shared_path}"
+      filename = "dump.#{Time.now.strftime("%Y%m%dT%H%M%S")}.sql"
+      on_rollback { run "rm #{tmpdir}/#{filename}" }
+      db_yml = capture("cat #{current_release}/config/database.yml")
+      db = YAML.load(db_yml)
+      username = db["production"]["username"]
+      password = db["production"]["password"]
+      database_name = db["production"]["database"]
+      run "mysqldump -u#{username} -p#{password} #{database_name} > #{tmpdir}/#{filename}"
+      get "#{tmpdir}/#{filename}", "db/#{filename}"
+      run "rm #{tmpdir}/#{filename}"
+    end
+  end
+end
+
+desc "gzip css and js for speed."
+task :gzip_js_and_css do
+  run "cd #{release_path}/public/stylesheets; for CSS in *.css; do   gzip -c $CSS > $CSS.gzip; done"
+  run "cd #{release_path}/public/javascripts; for JS in *.js; do   gzip -c $JS > $JS.gzip; done"
+end
+
+
+after "deploy:update_code", "symlink_database_yml", "gzip_js_and_css"
+# after "deploy:setup", "create_database_yml"

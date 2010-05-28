@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>X3</title>
+    <%= stylesheet_link_tag "screen", :media => "screen, projection" %>
+    <!--[if lt IE 8]>
+    <%= stylesheet_link_tag "ie", :media => "screen, projection" %>
+    <![endif]--> 
+    <%= javascript_include_tag "jquery-1.4.2.min.js", "jquery-ui-1.8.1.custom.min.js" %>
+    <%= csrf_meta_tag %>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+      </div>
+      <div id="subheader">
+      </div>
+      <div id="body">
+        <div id="navbar">
+          <%= yield :navbar %>
+        </div>
+        <div id="content">
+          <%- flash.each do |name, msg| %>
+          <div id="flash_<%= name %>">
+            <%= msg %>
+          </div>
+          <%- end %>
+          <%= yield %>
+        </div>
+      </div>
+      <div id="footer">
+        &copy; 2010
+        <%= yield :footer %>
+      </div>
+    </div>
+  </body>
+</html>

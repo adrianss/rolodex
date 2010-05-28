@@ -1,0 +1,25 @@
+# Activate apache rewrite engine
+RewriteEngine On
+
+# Use maintenance page when it is available in system/
+RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+RewriteCond %{REQUEST_URI} !\.(css|jpg|gif|png)$
+RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+RewriteRule ^.*$ %{DOCUMENT_ROOT}/system/maintenance.html [L]
+
+## Site5 not gzip files, so this is a hack
+# Need to generate gzip files with .gzip extension added for css and js
+AddEncoding gzip .gzip
+RewriteCond %{HTTP:Accept-Encoding} gzip
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_FILENAME}.gzip -f
+RewriteRule ^(.+)\.(css|js)$ /$1.$2.gzip [L]
+
+FileETag none
+ExpiresActive On
+<FilesMatch "\.(gif|png|jpg|js|css|gzip)$">
+  ExpiresDefault "modification plus 2 months"
+</FilesMatch>
+
+# Phusion Passenger
+PassengerEnabled on
