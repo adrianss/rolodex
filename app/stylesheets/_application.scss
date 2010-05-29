@@ -37,3 +37,12 @@
 #new_user, #new_user_session, .edit_user {
   max-width: 240px;
 }
+
+#contacts-bar-search input, #contacts-bar-search label {
+  display: inline;
+  width: 5em;
+}
+
+input#contacts-search-box {
+  width: 12em;  
+}

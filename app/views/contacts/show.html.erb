@@ -1,0 +1,49 @@
+<dl>
+  <dt>Name:</dt>
+  <dd><%=h @contact.name %></dd>
+  <dt>Company name:</dt>
+  <dd><%=h @contact.company_name %></dd>
+</dl>
+<div id="show-phones">
+  <table>
+    <thead>
+      <tr>
+        <th>Tag/Reference</th>
+        <th>Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contact.phones.each do |phone| %>
+      <tr>
+        <td><%= phone.tag %></td>
+        <td><%= phone.number %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>  
+</div>
+<div id="show-addresses">
+  <table>
+    <thead>
+      <tr>
+        <th>Tag/Reference</th>
+        <th>Street</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contact.addresses.each do |address| %>
+      <tr>
+        <td><%=h address.tag %></td>
+        <td><%=h address.street %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>  
+</div>
+
+
+
+
+
+<%= link_to 'Edit', edit_contact_path(@contact) %> |
+<%= link_to 'Back', contacts_path %>

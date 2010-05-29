@@ -1,1 +1,13 @@
 <h3>Contacts</h3>
+<div id="contacts-bar">
+  <div id="contacts-bar-search">
+    <% form_tag(contacts_path, :method => "get") do %>
+    <%= label_tag(:name, "Search:") %>
+    <%= text_field_tag(:name, {}, {:id => "contacts-search-box"} ) %>
+    <input type="reset" name="clear" value="Clear" />
+    <% end %>
+  </div>
+  <div id="contacts-bar-list">
+    
+  </div>
+</div>

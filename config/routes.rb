@@ -1,4 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :contacts
+
+  map.resources :contact_lists
+
   map.resource :user_session, :only => [:new, :create, :destroy]
   map.resources :users, :only => [:new, :edit, :create, :update]
   map.resource :account, :controller => "users"

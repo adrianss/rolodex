@@ -1,0 +1,51 @@
+<div class="field">
+  <%= f.label :name %><br />
+  <%= f.text_field :name %>
+</div>
+<div class="field">
+  <%= f.label :company_name %><br />
+  <%= f.text_field :company_name %>
+</div>
+<fieldset id="form-phones">
+  <legend>Phone Numbers</legend>
+  <table>
+    <thead>
+      <tr>
+        <th>Tag/Reference</th>
+        <th>Number</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% f.fields_for :phones do |phone| %>
+      <tr>
+        <td><%= phone.text_field :tag %></td>
+        <td><%= phone.text_field :number %></td>
+        <td><%= phone.check_box :_destroy %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</fieldset>
+
+<fieldset id="form-phones">
+  <legend>Addresses</legend>
+  <table>
+    <thead>
+      <tr>
+        <th>Tag/Reference</th>
+        <th>Street</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% f.fields_for :addresses do |address| %>
+      <tr>
+        <td><%= address.text_field :tag %></td>
+        <td><%= address.text_field :street %></td>
+        <td><%= address.check_box :_destroy %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</fieldset>
